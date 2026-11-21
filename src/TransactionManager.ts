@@ -83,7 +83,7 @@ export class TransactionManager {
     const SEND_TRANSACTION = process.env.SEND_TRANSACTION == "true";
 
     if (!SEND_TRANSACTION) {
-      console.log("Transaction signed but not sendt");
+      console.log("Transaction signed but not send");
       return;
     }
 
@@ -108,5 +108,21 @@ export class TransactionManager {
       );
       throw error;
     }
+
+    // Retrieve the sender's updated balance
+    const senderBalance = await this.walletExplorer.formattedBalance(
+      wallet.address,
+      "Sender",
+    );
+
+    // Retrieve teh recipient's updated balance.
+    const recipientBalance = await this.walletExplorer.formattedBalance(
+      recipientWallet.address,
+      "Recipient",
+    );
+
+    // Display both updated balances.
+    console.log("Sender balance (SOL:", senderBalance);
+    console.log("Recipient balance (SOL:", recipientBalance);
   }
 }
