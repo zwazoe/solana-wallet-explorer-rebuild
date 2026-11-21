@@ -34,9 +34,6 @@ export class WalletExplorer {
     // Format our SOL balance.
     const formatted = formatDecimalFixedPoint(formatter, solBalance);
 
-    // Display our SOL balance.
-    console.log("Wallet balance (SOL)", formatted);
-
     return formatted;
   }
 }
