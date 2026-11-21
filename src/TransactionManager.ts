@@ -14,6 +14,8 @@ import {
   type KeyPairSigner,
   signTransactionMessageWithSigners,
   getSignatureFromTransaction,
+  assertIsTransactionWithBlockhashLifetime,
+  sendAndConfirmTransactionFactory,
 } from "@solana/kit";
 
 // Import our SOL transfer instruction
@@ -68,15 +70,43 @@ export class TransactionManager {
     );
 
     // Sign our transaction message.
-    const signTransaction =
+    const signedTransaction =
       await signTransactionMessageWithSigners(transactionMessage);
 
     // Retrieve the transaction siganture.
-    const signature = getSignatureFromTransaction(signTransaction);
+    const signature = getSignatureFromTransaction(signedTransaction);
 
     // Display our signature.
     console.log("Transaction Signature:", signature);
 
-    console.log("Transaction prepared. Nothing sent.");
+    // Check wheater sending is enabled.
+    const SEND_TRANSACTION = process.env.SEND_TRANSACTION == "true";
+
+    if (!SEND_TRANSACTION) {
+      console.log("Transaction signed but not sendt");
+      return;
+    }
+
+    // Verfy transaction lifetime
+    assertIsTransactionWithBlockhashLifetime(signedTransaction);
+    //Create our transaction sender
+    const sendAndConfirm = sendAndConfirmTransactionFactory({
+      rpc,
+      rpcSubscriptions,
+    });
+
+    // Send and confirm our transaction
+    try {
+      await sendAndConfirm(signedTransaction, {
+        commitment: "confirmed",
+      });
+      console.log("Transaction confirmed:", signature);
+    } catch (error) {
+      console.error(
+        "Confirmation failed. Check this signature before retrying:",
+        signature,
+      );
+      throw error;
+    }
   }
 }
