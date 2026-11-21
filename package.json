@@ -1,0 +1,29 @@
+{
+  "name": "olana-wallet-explorer",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test:jest": "node --experimental-vm-modules ./node_modules/jest/bin/jest.js --runInBand",
+    "test:vi": "npx vitest run",
+    "gh:auth:switch": "gh auth switch --hostname github.com --user zwazoe"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@solana-program/system": "^0.16.0",
+    "@solana/kit": "^8.6.0",
+    "dotenv": "^18.0.10"
+  },
+  "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "@types/node": "^26.6.6",
+    "jest": "^30.5.2",
+    "ts-jest": "^29.4.15",
+    "tsx": "^4.23.15",
+    "typescript": "6.0.3",
+    "vitest": "^5.1.1"
+  }
+}
