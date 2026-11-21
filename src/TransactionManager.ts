@@ -12,6 +12,8 @@ import {
   setTransactionMessageLifetimeUsingBlockhash,
   appendTransactionMessageInstruction,
   type KeyPairSigner,
+  signTransactionMessageWithSigners,
+  getSignatureFromTransaction,
 } from "@solana/kit";
 
 // Import our SOL transfer instruction
@@ -64,6 +66,17 @@ export class TransactionManager {
       "Transaction instructions:",
       transactionMessage.instructions.length,
     );
+
+    // Sign our transaction message.
+    const signTransaction =
+      await signTransactionMessageWithSigners(transactionMessage);
+
+    // Retrieve the transaction siganture.
+    const signature = getSignatureFromTransaction(signTransaction);
+
+    // Display our signature.
+    console.log("Transaction Signature:", signature);
+
     console.log("Transaction prepared. Nothing sent.");
   }
 }
