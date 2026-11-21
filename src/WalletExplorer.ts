@@ -36,4 +36,19 @@ export class WalletExplorer {
 
     return formatted;
   }
+
+  async showAccountInfo(accountAddress: Address) {
+    // Retrieve account information.
+    const accountInfo = await this.rpc.getAccountInfo(accountAddress).send();
+
+    // Display the account information
+    if (accountInfo.value !== null) {
+      console.log("Account Address:", accountAddress);
+      console.log("Account Owner:", accountInfo.value.owner);
+      console.log("Executable:", accountInfo.value.executable);
+      console.log("Lamports:", accountInfo.value.lamports);
+    } else {
+      console.log("Account not found on Devnet");
+    }
+  }
 }

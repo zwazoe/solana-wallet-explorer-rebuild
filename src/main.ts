@@ -50,6 +50,11 @@ async function main() {
 
   // Display the other wallet's SOL balance.
   console.log("Other wallet balance (SOL): ", otherBalance);
+
+  // Look up existing Solana account.
+  const accountAddress = address("11111111111111111111111111111111");
+
+  await walletExplorer.showAccountInfo(accountAddress);
 }
 
 // Execute our main function
