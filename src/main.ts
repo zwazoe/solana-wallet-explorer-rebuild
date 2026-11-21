@@ -1,28 +1,22 @@
 import "dotenv/config";
-import { createSolanaRpc, createSolanaRpcSubscriptions } from "@solana/kit";
+import { SolanaConnection } from "./SolanaConnection";
 import { WalletManager } from "./WalletManager";
-// Create our Solana RPC Client.
-
-const rpc = createSolanaRpc(
-  process.env.SOLANA_RPC_URL ?? "https://api.devnet.solana.com",
-);
-
-// Create our WebSocket subscription client.
-const rpcSubscriptions = createSolanaRpcSubscriptions(
-  process.env.SOLANA_WS_URL ?? "wss://api.devnet.solana.com",
-);
 
 // Read our wallet path from .env
 const walletPath = process.env.WALLET_PATH ?? "./devnet-wallet.json";
 
-// Create our wallet manager.
+// Create our class isntances
+const connection = new SolanaConnection();
 const walletManager = new WalletManager();
+
 console.log("Solana Wallet Explorer");
 
 // Create our async main function.
-
 async function main() {
   console.log("Connecting to Solana Devnet...");
+
+  // Retrieve our RPC clients from SolanaConnection.
+  const { rpc } = connection.connectWithSolanaRpc();
 
   // Retrieve the curretnt slot.
   const slot = await rpc.getSlot().send();
