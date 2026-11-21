@@ -6,6 +6,7 @@
   "scripts": {
     "test:jest": "node --experimental-vm-modules ./node_modules/jest/bin/jest.js --runInBand",
     "test:vi": "npx vitest run",
+    "test": "npm run test:jest && npm run test:vi && npx tsc --noEmit",
     "gh:auth:switch": "gh auth switch --hostname github.com --user zwazoe"
   },
   "keywords": [],

@@ -31,7 +31,7 @@ async function main() {
   const { rpc } = connection.connectWithSolanaRpc();
 
   // Retrieve the curretnt slot.
-  const slot = await rpc.getSlot().send();
+  const slot = await connection.retry(() => rpc.getSlot().send());
 
   // Display the result
   console.log("Connected to Solana Devnet");
