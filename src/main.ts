@@ -1,6 +1,7 @@
 import "dotenv/config";
 import { SolanaConnection } from "./SolanaConnection";
 import { WalletManager } from "./WalletManager";
+import { lamportsToSol, formatDecimalFixedPoint } from "@solana/kit";
 
 // Read our wallet path from .env
 const walletPath = process.env.WALLET_PATH ?? "./devnet-wallet.json";
@@ -27,6 +28,26 @@ async function main() {
 
   // Load or create our wallet
   const wallet = await walletManager.loadOrCreateWallet(walletPath);
+
+  // Retrieve our wallet balance.
+  const balance = await rpc.getBalance(wallet.address).send();
+
+  // Display the balance in lamports.
+  console.log("Wallet balance (lamports):", balance.value);
+
+  // Convert lamports into SOL.
+  const solBalance = lamportsToSol(balance.value);
+
+  // Create our number formatter.
+  const formatter = new Intl.NumberFormat("en-US", {
+    maximumFractionDigits: solBalance.decimals,
+  });
+
+  // Format our SOL balance.
+  const formatted = formatDecimalFixedPoint(formatter, solBalance);
+
+  // Display our SOL balance.
+  console.log("Wallet balance (SOL)", formatted);
 }
 
 // Execute our main function
