@@ -1,7 +1,5 @@
 import "dotenv/config";
 import {
-  createSolanaRpc,
-  createSolanaRpcSubscriptions,
   generateKeyPairSigner,
   writeKeyPairSigner,
   createKeyPairSignerFromBytes,
