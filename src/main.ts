@@ -55,6 +55,9 @@ async function main() {
   const accountAddress = address("11111111111111111111111111111111");
 
   await walletExplorer.showAccountInfo(accountAddress);
+
+  // Retrieve our transaction history
+  await walletExplorer.showtransactionHistory(wallet.address);
 }
 
 // Execute our main function

@@ -51,4 +51,31 @@ export class WalletExplorer {
       console.log("Account not found on Devnet");
     }
   }
+
+  async showtransactionHistory(walletAddress: Address) {
+    // Retrieve our recent transactions.
+    const transactions = await this.rpc
+      .getSignaturesForAddress(walletAddress, {
+        limit: 5,
+        commitment: "confirmed",
+      })
+      .send();
+
+    // Display the number of transactions.
+    console.log("Transactions found: ", transactions.length);
+
+    // Display each transaction.
+    for (const t of transactions) {
+      console.log("______________________________");
+      console.log("Signature:", t.signature);
+
+      if (t.err) {
+        console.log("Error:", t.err);
+        continue;
+      }
+
+      console.log("Slot:", t.slot);
+      console.log("Confirmation:", t.confirmationStatus);
+    }
+  }
 }
