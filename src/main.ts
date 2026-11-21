@@ -3,7 +3,18 @@ import { SolanaConnection } from "./SolanaConnection";
 import { WalletManager } from "./WalletManager";
 import { WalletExplorer } from "./WalletExplorer";
 
-import { address } from "@solana/kit";
+import {
+  address,
+  lamports,
+  pipe,
+  createTransactionMessage,
+  setTransactionMessageFeePayerSigner,
+  setTransactionMessageLifetimeUsingBlockhash,
+  appendTransactionMessageInstruction,
+} from "@solana/kit";
+
+// Import our SOL transfer instruction
+import { getTransferSolInstruction } from "@solana-program/system";
 
 // Read our wallet path from .env
 const walletPath = process.env.WALLET_PATH ?? "./devnet-wallet.json";
@@ -58,6 +69,45 @@ async function main() {
 
   // Retrieve our transaction history
   await walletExplorer.showtransactionHistory(wallet.address);
+
+  // Load or Create our recipient wallet.
+  const recipientPath =
+    process.env.RECIPIENT_WALLET_PATH ?? "./devnet-recipient.json";
+
+  const recipientWallet = await walletManager.loadOrCreateWallet(recipientPath);
+  console.log("Recipient Address: ", recipientWallet.address);
+
+  if (wallet.address === recipientWallet.address) {
+    throw new Error("Sneder and recipient connot be the same wallet");
+  }
+  const transferInstruction = getTransferSolInstruction({
+    source: wallet,
+    destination: recipientWallet.address,
+    amount: lamports(1_000_000n),
+  });
+
+  // Retrieve the latest blockhash
+  const { value: latestBlockhash } = await rpc.getLatestBlockhash().send();
+
+  // Prepare our transaction message
+  const transactionMessage = pipe(
+    createTransactionMessage({ version: 0 }),
+    (message) => setTransactionMessageFeePayerSigner(wallet, message),
+    (message) =>
+      setTransactionMessageLifetimeUsingBlockhash(latestBlockhash, message),
+    (message) =>
+      appendTransactionMessageInstruction(transferInstruction, message),
+  );
+
+  // Display our prepared transfer.
+  console.log("Transfer amount: 0.001 SOL");
+  console.log("From:", wallet.address);
+  console.log("To:", recipientWallet.address);
+  console.log(
+    "Transaction instructions:",
+    transactionMessage.instructions.length,
+  );
+  console.log("Transaction prepared. Nothing sent.");
 }
 
 // Execute our main function
